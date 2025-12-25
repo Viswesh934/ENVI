@@ -1,0 +1,7 @@
+{
+  "aqi": { "value": 158, "status": "Unhealthy" },
+  "treeIndex": { "score": 72, "level": "Good" },
+  "environmentScore": { "score": 64, "summary": "Moderate conditions" },
+  "activity": { "level": "caution", "message": "Better after 7 PM in shaded areas" },
+  "insight": "Air quality and heat reduce comfort. Tree cover helps slightly."
+}

@@ -5,13 +5,15 @@ import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 import { MetricCard } from "@/components/MetricCard"
-import { ActivityCard } from "@/components/ActivityCard"
 import { InsightStrip } from "@/components/InsightStrip"
+import { ActivityCard } from "@/components/ActivityCard"
 
-type AQIData = {
-  aqi: number
-  status: string
-  dominantPollutant: string
+type TreeData = {
+  treeIndex: {
+    score: number
+    level: string
+  }
+  benefits: string
   advice: {
     level: "safe" | "caution" | "avoid"
     message: string
@@ -19,23 +21,26 @@ type AQIData = {
   insight: string
 }
 
-function AirQualityPage() {
-  const [data, setData] = useState<AQIData | null>(null)
+function TreeIndexPage() {
+  const [data, setData] = useState<TreeData | null>(null)
   const location = "Hyderabad"
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       setData({
-        aqi: 156,
-        status: "Unhealthy for sensitive groups",
-        dominantPollutant: "PM2.5",
+        treeIndex: {
+          score: 67,
+          level: "Moderate green cover",
+        },
+        benefits:
+          "Tree cover helps reduce surface temperatures, improves walkability, and slightly buffers air pollution.",
         advice: {
-          level: "caution",
+          level: "safe",
           message:
-            "Sensitive individuals should limit prolonged outdoor exertion. Prefer indoor activities.",
+            "Short walks in shaded streets or parks are comfortable today, especially during mornings and evenings.",
         },
         insight:
-          "PM2.5 particles are small enough to enter the bloodstream and are the main reason for poor air quality today.",
+          "Areas with higher tree density can feel 3–5°C cooler during the day compared to exposed roads.",
       })
     }, 400)
 
@@ -60,26 +65,26 @@ function AirQualityPage() {
       {/* Header */}
       <header className="space-y-2">
         <h1 className="text-4xl font-bold tracking-tight">
-          Air Quality
+          Green Cover
         </h1>
         <p className="text-muted-foreground">
-          Current air conditions in {location}
+          Tree density and shade around {location}
         </p>
       </header>
 
-      {/* AQI Summary */}
+      {/* Tree Index Summary */}
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <MetricCard
-          icon="🌫️"
-          title="AQI"
-          value={data.aqi}
-          subtitle={data.status}
+          icon="🌳"
+          title="Tree Index"
+          value={data.treeIndex.score}
+          subtitle={data.treeIndex.level}
         />
         <MetricCard
-          icon="🧪"
-          title="Dominant Pollutant"
-          value={0}
-          subtitle={data.dominantPollutant}
+          icon="☀️"
+          title="Heat Buffer"
+          value={50}
+          subtitle="Based on local tree cover"
         />
       </section>
 
@@ -87,20 +92,18 @@ function AirQualityPage() {
       <section>
         <Card className="p-6 space-y-2">
           <p className="text-sm font-semibold">
-            What this means
+            Why green cover matters
           </p>
           <p className="text-sm text-muted-foreground">
-            Air quality is elevated today due to fine particulate matter.
-            Short outdoor exposure is generally okay, but prolonged activity
-            may cause discomfort for sensitive individuals.
+            {data.benefits}
           </p>
         </Card>
       </section>
 
-      {/* Action */}
+      {/* Activity guidance */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">
-          Should I go outside?
+          Outdoor comfort today
         </h2>
         <ActivityCard
           level={data.advice.level}
@@ -113,12 +116,12 @@ function AirQualityPage() {
 
       {/* Footer */}
       <footer className="pt-8 text-center text-xs text-muted-foreground">
-        AQI data updates periodically • ENVI
+        Tree data derived from local green cover estimates • ENVI
       </footer>
     </main>
   )
 }
 
-export const Route = createFileRoute("/aqi/")({
-  component: AirQualityPage,
+export const Route = createFileRoute("/tree/")({
+  component: TreeIndexPage,
 })

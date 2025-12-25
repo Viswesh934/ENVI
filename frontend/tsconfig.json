@@ -1,17 +1,12 @@
 {
-  "compilerOptions": {
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"],
-      "@components/*": ["components/*"],
-      "@stores/*": ["stores/*"]
-    }
-  },
   "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "forceConsistentCasingInFileNames": true,
+    "strict": true
+  }
 }

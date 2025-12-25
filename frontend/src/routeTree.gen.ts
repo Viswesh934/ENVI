@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TreeIndexRouteImport } from './routes/tree/index'
 import { Route as AqiIndexRouteImport } from './routes/aqi/index'
+import { Route as ActivityIndexRouteImport } from './routes/activity/index'
 import { Route as AqiCityRouteImport } from './routes/aqi/$city'
 
 const AboutRoute = AboutRouteImport.update({
@@ -24,9 +26,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TreeIndexRoute = TreeIndexRouteImport.update({
+  id: '/tree/',
+  path: '/tree/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AqiIndexRoute = AqiIndexRouteImport.update({
   id: '/aqi/',
   path: '/aqi/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActivityIndexRoute = ActivityIndexRouteImport.update({
+  id: '/activity/',
+  path: '/activity/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AqiCityRoute = AqiCityRouteImport.update({
@@ -39,34 +51,49 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/aqi/$city': typeof AqiCityRoute
+  '/activity': typeof ActivityIndexRoute
   '/aqi': typeof AqiIndexRoute
+  '/tree': typeof TreeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/aqi/$city': typeof AqiCityRoute
+  '/activity': typeof ActivityIndexRoute
   '/aqi': typeof AqiIndexRoute
+  '/tree': typeof TreeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/aqi/$city': typeof AqiCityRoute
+  '/activity/': typeof ActivityIndexRoute
   '/aqi/': typeof AqiIndexRoute
+  '/tree/': typeof TreeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/aqi/$city' | '/aqi'
+  fullPaths: '/' | '/about' | '/aqi/$city' | '/activity' | '/aqi' | '/tree'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/aqi/$city' | '/aqi'
-  id: '__root__' | '/' | '/about' | '/aqi/$city' | '/aqi/'
+  to: '/' | '/about' | '/aqi/$city' | '/activity' | '/aqi' | '/tree'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/aqi/$city'
+    | '/activity/'
+    | '/aqi/'
+    | '/tree/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AqiCityRoute: typeof AqiCityRoute
+  ActivityIndexRoute: typeof ActivityIndexRoute
   AqiIndexRoute: typeof AqiIndexRoute
+  TreeIndexRoute: typeof TreeIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -85,11 +112,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tree/': {
+      id: '/tree/'
+      path: '/tree'
+      fullPath: '/tree'
+      preLoaderRoute: typeof TreeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/aqi/': {
       id: '/aqi/'
       path: '/aqi'
       fullPath: '/aqi'
       preLoaderRoute: typeof AqiIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/activity/': {
+      id: '/activity/'
+      path: '/activity'
+      fullPath: '/activity'
+      preLoaderRoute: typeof ActivityIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/aqi/$city': {
@@ -106,7 +147,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AqiCityRoute: AqiCityRoute,
+  ActivityIndexRoute: ActivityIndexRoute,
   AqiIndexRoute: AqiIndexRoute,
+  TreeIndexRoute: TreeIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
