@@ -14,6 +14,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TreeIndexRouteImport } from './routes/tree/index'
 import { Route as AqiIndexRouteImport } from './routes/aqi/index'
 import { Route as ActivityIndexRouteImport } from './routes/activity/index'
+import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AqiCityRouteImport } from './routes/aqi/$city'
 
 const AboutRoute = AboutRouteImport.update({
@@ -41,6 +43,16 @@ const ActivityIndexRoute = ActivityIndexRouteImport.update({
   path: '/activity/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AqiCityRoute = AqiCityRouteImport.update({
   id: '/aqi/$city',
   path: '/aqi/$city',
@@ -51,6 +63,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/aqi/$city': typeof AqiCityRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/activity': typeof ActivityIndexRoute
   '/aqi': typeof AqiIndexRoute
   '/tree': typeof TreeIndexRoute
@@ -59,6 +73,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/aqi/$city': typeof AqiCityRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/activity': typeof ActivityIndexRoute
   '/aqi': typeof AqiIndexRoute
   '/tree': typeof TreeIndexRoute
@@ -68,20 +84,40 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/aqi/$city': typeof AqiCityRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/activity/': typeof ActivityIndexRoute
   '/aqi/': typeof AqiIndexRoute
   '/tree/': typeof TreeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/aqi/$city' | '/activity' | '/aqi' | '/tree'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/aqi/$city'
+    | '/auth/login'
+    | '/auth/register'
+    | '/activity'
+    | '/aqi'
+    | '/tree'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/aqi/$city' | '/activity' | '/aqi' | '/tree'
+  to:
+    | '/'
+    | '/about'
+    | '/aqi/$city'
+    | '/auth/login'
+    | '/auth/register'
+    | '/activity'
+    | '/aqi'
+    | '/tree'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/aqi/$city'
+    | '/auth/login'
+    | '/auth/register'
     | '/activity/'
     | '/aqi/'
     | '/tree/'
@@ -91,6 +127,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AqiCityRoute: typeof AqiCityRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
   ActivityIndexRoute: typeof ActivityIndexRoute
   AqiIndexRoute: typeof AqiIndexRoute
   TreeIndexRoute: typeof TreeIndexRoute
@@ -133,6 +171,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ActivityIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/aqi/$city': {
       id: '/aqi/$city'
       path: '/aqi/$city'
@@ -147,6 +199,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AqiCityRoute: AqiCityRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
   ActivityIndexRoute: ActivityIndexRoute,
   AqiIndexRoute: AqiIndexRoute,
   TreeIndexRoute: TreeIndexRoute,

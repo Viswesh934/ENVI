@@ -1,23 +1,46 @@
-
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRoute, Outlet, redirect, useLocation } from "@tanstack/react-router";
 import { Sidebar } from "../components/Sidebar";
 import { Suspense } from "react";
 import { PageLoader } from "../components/PageLoader";
+import Cookies from "js-cookie";
+
+function isAuthenticated() {
+  return !!Cookies.get("token");
+}
 
 export const Route = createRootRoute({
   component: RootComponent,
+  beforeLoad: async ({ location }) => {
+    if (
+      location.pathname.startsWith("/auth/login") ||
+      location.pathname.startsWith("/auth/register")
+    ) {
+      return;
+    }
+    if (!isAuthenticated()) {
+      throw redirect({
+        to: "/auth/login",
+        search: { redirect: location.pathname },
+      });
+    }
+  },
 });
 
 function RootComponent() {
+  const location = useLocation();
+  const hideSidebar =
+    location.pathname.startsWith("/auth/login") ||
+    location.pathname.startsWith("/auth/register");
+
   return (
     <div className="min-h-screen flex bg-linear-to-br from-blue-50 via-emerald-50 to-teal-50 text-slate-900">
-      <Sidebar />
+      {!hideSidebar && <Sidebar />}
       <main className="flex-1 mx-auto max-w-4xl px-6 py-8">
-        <Suspense 
+        <Suspense
           fallback={
             <div className="fixed inset-0 left-64 flex items-center justify-center z-50 bg-white/90">
               <div className="text-center space-y-6">
-                <PageLoader 
+                <PageLoader
                   variant="gradient"
                   size="lg"
                   text="Loading your environment dashboard"
@@ -34,7 +57,7 @@ function RootComponent() {
               </div>
             </div>
           }
-        > 
+        >
           <Outlet />
         </Suspense>
       </main>
