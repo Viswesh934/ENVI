@@ -1,21 +1,26 @@
 // src/app.ts
 import Fastify from "fastify"
+import fastifyCors from "@fastify/cors"
 import aqiRoutes from "./routes/aqi.route"
 import jwt from "./plugins/jwt"
-import auth from "./plugins/auth"
-import register from "./routes/auth/register"
-import login from "./routes/auth/login"
+import authRoutes from "./routes/auth"
 import dynamodbInit from "./plugins/dynamodb-init"
+import dotenv from "dotenv"
+
+dotenv.config()
 
 
 const app = Fastify({ logger: true })
+app.register(fastifyCors, {
+  origin: process.env.FRONTEND_URL, // Use your frontend URL here
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+})
 
 app.register(dynamodbInit)
 app.register(jwt)
-app.register(auth)
-app.register(register)
-app.register(login)
-app.register(aqiRoutes, { prefix: "/aqi" })
+app.register(authRoutes, { prefix: "/api" })
+app.register(aqiRoutes, { prefix: "/api" })
 
 app.listen({ port: 3000 }, (err, address) => {
   if (err) {

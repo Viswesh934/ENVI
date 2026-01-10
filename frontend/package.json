@@ -15,8 +15,10 @@
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-router": "^1.143.6",
+    "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -30,6 +32,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@tanstack/router-plugin": "^1.143.6",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
