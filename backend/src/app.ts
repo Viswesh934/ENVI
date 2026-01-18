@@ -2,6 +2,7 @@
 import Fastify from "fastify"
 import fastifyCors from "@fastify/cors"
 import aqiRoutes from "./routes/aqi.route"
+import geminiRoutes from "./routes/gemini.route"
 import jwt from "./plugins/jwt"
 import authRoutes from "./routes/auth"
 import dynamodbInit from "./plugins/dynamodb-init"
@@ -21,6 +22,7 @@ app.register(dynamodbInit)
 app.register(jwt)
 app.register(authRoutes, { prefix: "/api" })
 app.register(aqiRoutes, { prefix: "/api" })
+app.register(geminiRoutes, { prefix: "/api/gemini" })
 
 app.listen({ port: 3000 }, (err, address) => {
   if (err) {

@@ -42,7 +42,7 @@ export function Sidebar() {
                   "group relative flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-all",
                   "text-muted-foreground hover:bg-muted hover:text-foreground",
                   isActive &&
-                    "bg-emerald-50 text-emerald-700"
+                  "bg-emerald-50 text-emerald-700"
                 )}
               >
                 {/* Active rail */}
