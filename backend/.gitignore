@@ -3,3 +3,4 @@ DynamoDBLocal.jar
 shared-local-instance.db
 dynamodb-local-metadata.json
 node_modules/
+.env
