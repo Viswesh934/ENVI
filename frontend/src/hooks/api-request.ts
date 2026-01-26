@@ -20,6 +20,9 @@ interface ApiErrorResponse {
 }
 
 export class ApiRequest {
+  static get<T>(arg0: string, arg1: { params: { location: string | undefined; lat: number | undefined; lng: number | undefined; }; }) {
+    throw new Error("Method not implemented.");
+  }
   private axiosInstance: AxiosInstance;
 
   constructor() {
