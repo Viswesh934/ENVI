@@ -138,3 +138,85 @@ export function getPollutantCacheKey(
 ): string {
     return generateCacheKey(pollutant, value, cityName)
 }
+
+/**
+ * Advanced: Generate Green Cover Report
+ * Uses Search Grounding + JSON Synthesis
+ */
+export async function generateGreenCoverReport(location: string, lat?: number, lng?: number): Promise<any> {
+    const model = "gemini-2.0-flash-exp" // Using a capable model for tools
+
+    // Step 1: Search & Analysis
+    const searchPrompt = `Analyze the "Green Cover" of ${location}. 
+    1. Determine the current Tree Index (urban canopy health on a scale of 0-10).
+    2. Find current AQI data.
+    3. Identify 3-5 specific "Reforestation Priority Zones" or actual parks/streets that need more trees. 
+    4. Provide exact GPS coordinates (lat, lng) for these specific locations.
+    5. Calculate how many MORE trees are needed to reach a 40% urban canopy target.
+    Location Context: ${lat && lng ? `Near Lat: ${lat}, Lng: ${lng}` : 'Global'}.`
+
+    try {
+        const response = await ai.models.generateContent({
+            model,
+            contents: searchPrompt,
+            config: {
+                tools: [{ googleSearch: {} }],
+            }
+        })
+
+        const textOutput = response.text || "No data available."
+
+        // Extract sources if available
+        const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks?.map((chunk: any) => {
+            if (chunk.web) return { title: chunk.web.title, uri: chunk.web.uri, type: 'web' }
+            return null
+        }).filter(Boolean) || []
+
+        // Step 2: Synthesis to JSON
+        const synthesisPrompt = `Based on this intelligence: "${textOutput}", output a JSON object exactly matching this schema.
+        Ignore AQI if not relevant to the green cover analysis, but include if available.
+        
+        Required JSON Schema:
+        {
+            "location": "${location}",
+            "coords": { "lat": number, "lng": number },
+            "summary": "Concise summary",
+            "treeIndex": number (0-10),
+            "treeCanopy": {
+                "coveragePercentage": number,
+                "targetCoverage": 40,
+                "estimatedTreeCount": number,
+                "treesToPlant": number,
+                "localSpecies": ["species"]
+            },
+            "reforestationZones": [
+                { "name": "Zone Name", "lat": number, "lng": number, "priority": "High|Medium|Low", "reason": "Short reason" }
+            ],
+            "insight": "Insight text"
+        }`
+
+        const synthResponse = await ai.models.generateContent({
+            model: "gemini-2.0-flash-exp",
+            contents: synthesisPrompt,
+            config: {
+                responseMimeType: "application/json",
+            }
+        })
+
+        if (!synthResponse.text) throw new Error("Failed to synthesize JSON")
+
+        const cleanText = synthResponse.text.replace(/```json/g, "").replace(/```/g, "").trim()
+        let parsed = JSON.parse(cleanText)
+
+        // Handle case where LLM returns an array [ {...} ]
+        if (Array.isArray(parsed)) {
+            parsed = parsed[0] ?? {}
+        }
+
+        return { ...parsed, sources }
+
+    } catch (error) {
+        console.error("Green Cover Generation Error:", error)
+        throw new Error("Failed to generate green cover report")
+    }
+}
