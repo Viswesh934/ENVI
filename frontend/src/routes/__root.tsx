@@ -62,7 +62,7 @@ function RootComponent() {
           </div>
         )}
 
-        <main className="flex-1 mx-auto max-w-4xl px-6 py-8 w-full">
+        <main className="flex-1 px-8 py-8 w-full">
           <Suspense
             fallback={
               <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/90">

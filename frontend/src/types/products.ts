@@ -50,6 +50,8 @@ export interface EcoProduct {
     imageUrl?: string
     brand?: string
     features?: string[]
+    ecoScore?: number
+    sustainabilityTags?: string[]
 }
 
 // Dashboard Types

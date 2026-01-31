@@ -102,9 +102,6 @@ function GreenCoverPage() {
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-emerald-100 rounded-lg">
-                <TreePine className="h-6 w-6 text-emerald-600" />
-              </div>
               <div className="flex-1">
                 <h1 className="text-3xl font-bold text-gray-900">Green Cover Analysis</h1>
                 <p className="text-gray-600 mt-1">

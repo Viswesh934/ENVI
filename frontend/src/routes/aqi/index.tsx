@@ -202,7 +202,7 @@ function AirQualityPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Air Quality</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Air Quality</h1>
           <div className="flex items-center gap-2 mt-2 text-gray-600">
             <MapPin className="h-5 w-5" />
             <span className="text-lg">{cityName}</span>

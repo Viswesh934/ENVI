@@ -5,6 +5,7 @@ export const TABLES = {
     AQI_HISTORY: "aqi_history",
     ECO_PRODUCTS: "eco_products",
     API_CACHE: "api_cache",
+    USER_ACTIVITIES: "user_activities",
 }
 
 export async function createAqiHistoryTable() {
@@ -95,9 +96,45 @@ export async function createApiCacheTable() {
     }
 }
 
+export async function createUserActivitiesTable() {
+    const createCommand = new CreateTableCommand({
+        TableName: TABLES.USER_ACTIVITIES,
+        KeySchema: [
+            { AttributeName: "activityId", KeyType: "HASH" },  // userId#date
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "activityId", AttributeType: "S" },
+        ],
+        BillingMode: "PAY_PER_REQUEST",
+    })
+
+    try {
+        await dynamo.send(createCommand)
+        console.log("✅ User Activities table created")
+
+        // Enable TTL on the table
+        const ttlCommand = new UpdateTimeToLiveCommand({
+            TableName: TABLES.USER_ACTIVITIES,
+            TimeToLiveSpecification: {
+                Enabled: true,
+                AttributeName: "ttl",
+            },
+        })
+        await dynamo.send(ttlCommand)
+        console.log("✅ TTL enabled on User Activities table")
+    } catch (error: any) {
+        if (error.name === "ResourceInUseException") {
+            console.log("ℹ️  User Activities table already exists")
+        } else {
+            throw error
+        }
+    }
+}
+
 export async function initializeTables() {
     await createAqiHistoryTable()
     await createEcoProductsTable()
     await createApiCacheTable()
+    await createUserActivitiesTable()
 }
 

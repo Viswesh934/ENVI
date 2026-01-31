@@ -1,17 +1,14 @@
 import {
     Brain,
     X,
-    Sparkles,
     TrendingUp,
-    AlertCircle,
     Droplets,
-    Wind,
     Heart,
     Info,
+    LayoutGrid,
+    Database,
 } from "lucide-react";
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { formatInsight } from "../lib/markdownUtils";
 import {
     Tabs,
     TabsContent,
@@ -19,6 +16,10 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs";
 import type { RiskLevel } from "@/types/products";
+import { HealthInsights } from "./ai/HealthInsights";
+import { HistoricalAnalysis } from "./ai/HistoricalAnalysis";
+import { DataProvenance } from "./ai/DataProvenance";
+import { Card } from "./ui/card";
 
 interface AIAdviceData {
     advice: string;
@@ -44,300 +45,174 @@ export function AIInsightsPanel({
 
     return (
         <>
-            {/* Floating Button */}
+            {/* Floating Action Button */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-lg bg-gradient-to-br from-emerald-500 to-teal-500 hover:scale-105 transition-all text-white"
+                className="fixed bottom-8 right-8 z-50 p-5 rounded-[2rem] shadow-2xl bg-teal-500 border-4 border-white text-white hover:scale-110 active:scale-95 transition-all group overflow-hidden"
             >
-                <Brain className="h-6 w-6" />
+                <div className="absolute inset-0 bg-teal-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Brain className="h-6 w-6 relative z-10" />
             </button>
 
-            {/* Modal */}
+            {/* Modal Layer */}
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
-                    <div className="relative w-full max-w-4xl max-h-[90vh] bg-white shadow-2xl overflow-hidden">
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-xl p-4 animate-in fade-in duration-500"
+                    onClick={() => setIsOpen(false)}
+                >
+                    <div
+                        className="relative w-full max-w-5xl max-h-[90vh] bg-white shadow-[0_32px_128px_-16px_rgba(0,0,0,0.15)] rounded-[3.5rem] overflow-hidden animate-in zoom-in-95 duration-500 border-8 border-white"
+                        onClick={(e) => e.stopPropagation()}
+                    >
 
-                        {/* Header */}
-                        <div className="p-6 bg-white border-b">
-                            <div className="flex justify-between items-center">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-emerald-100 rounded-lg">
-                                        <Brain className="h-7 w-7 text-emerald-600" />
+                        {/* Close Indicator */}
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            className="absolute top-10 right-10 z-50 p-3 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all text-gray-400 hover:text-gray-900"
+                        >
+                            <X className="h-6 w-6" />
+                        </button>
+
+                        <div className="flex h-[85vh] overflow-hidden">
+                            {/* Sidebar / Tabs Navigation */}
+                            <Tabs defaultValue="health" className="flex w-full">
+                                <div className="w-80 border-r border-gray-100 p-10 flex flex-col justify-between overflow-y-auto">
+                                    <div className="space-y-10">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-3 bg-teal-500 rounded-2xl shadow-lg shadow-emerald-200">
+                                                <Brain className="h-6 w-6 text-white" />
+                                            </div>
+                                            <div>
+                                                <h2 className="text-2xl font-black tracking-tighter text-gray-900 leading-tight">
+                                                    ENVI AI
+                                                </h2>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">
+                                                    Intelligence Hub
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <TabsList className="flex flex-col h-auto bg-transparent p-0 gap-2 items-stretch">
+                                            {[
+                                                { value: "health", label: "Health Insights", icon: Heart },
+                                                { value: "analysis", label: "Pattern Analysis", icon: TrendingUp },
+                                                { value: "data", label: "Data Provenance", icon: Database },
+                                                { value: "info", label: "System Info", icon: Info },
+                                            ].map((tab) => (
+                                                <TabsTrigger
+                                                    key={tab.value}
+                                                    value={tab.value}
+                                                    className="justify-start px-6 py-4 rounded-2xl text-teal data-[state=active]:bg-teal-500 data-[state=active]:text-white data-[state=active]:shadow-xl transition-all font-black text-sm tracking-tight gap-4"
+                                                >
+                                                    <tab.icon className="h-5 w-5" />
+                                                    {tab.label}
+                                                </TabsTrigger>
+                                            ))}
+                                        </TabsList>
                                     </div>
-                                    <div>
-                                        <h2 className="text-2xl font-bold text-gray-900">
-                                            Air Quality Intelligence
-                                        </h2>
-                                        <p className="text-gray-600 text-sm">
-                                            Personalized environmental insights
+
+                                    <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100 bg-opacity-50">
+                                        <div className="flex items-center gap-2 text-emerald-600 mb-2">
+                                            <Droplets className="h-4 w-4" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest">Hydration Tip</span>
+                                        </div>
+                                        <p className="text-xs font-bold text-gray-700 leading-relaxed">
+                                            High ozone levels detected. Increase purified water intake to support respiratory defense.
                                         </p>
                                     </div>
                                 </div>
 
-                                <button
-                                    onClick={() => setIsOpen(false)}
-                                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                                >
-                                    <X className="h-6 w-6 text-gray-600" />
-                                </button>
-                            </div>
-
-                            {/* Tabs */}
-                            <Tabs defaultValue="health" className="mt-6">
-                                <TabsList className="bg-gray-100 p-1">
-
-                                    <TabsTrigger
-                                        value="health"
-                                        className="data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
-                                    >
-                                        <Heart className="h-4 w-4 mr-2" />
-                                        Health
-                                    </TabsTrigger>
-
-                                    <TabsTrigger
-                                        value="analysis"
-                                        className="data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
-                                    >
-                                        <TrendingUp className="h-4 w-4 mr-2" />
-                                        Analysis
-                                    </TabsTrigger>
-
-                                    <TabsTrigger
-                                        value="data"
-                                        className="data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
-                                    >
-                                        <Sparkles className="h-4 w-4 mr-2" />
-                                        Data
-                                    </TabsTrigger>
-
-                                    <TabsTrigger
-                                        value="info"
-                                        className="data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
-                                    >
-                                        <Info className="h-4 w-4 mr-2" />
-                                        Info
-                                    </TabsTrigger>
-                                </TabsList>
-
-                                {/* Content */}
-                                <div className="p-6 overflow-y-auto max-h-[65vh] bg-gray-50">
-
-                                    {/* Health */}
-                                    <TabsContent value="health" className="space-y-6 mt-4">
-
-                                        <h3 className="text-xl font-semibold text-gray-900">
-                                            Personalized Health Advice
-                                        </h3>
-
+                                {/* Main Content Scrollable Area */}
+                                <div className="flex-1 overflow-y-auto bg-white p-12">
+                                    <TabsContent value="health" className="mt-0 outline-none">
                                         {aiAdvice ? (
-                                            <>
-                                                <Card className="p-6 bg-white border shadow-sm">
-                                                    <div className="prose prose-sm max-w-none">
-                                                        {formatInsight(aiAdvice.advice)}
-                                                    </div>
-                                                </Card>
-
-                                                {/* Impacts */}
-                                                {aiAdvice.healthImpacts?.length > 0 && (
-                                                    <div className="space-y-4">
-
-                                                        <h3 className="text-xl font-semibold text-gray-900">
-                                                            Health Impacts
-                                                        </h3>
-
-                                                        <div className="grid md:grid-cols-2 gap-4">
-                                                            {aiAdvice.healthImpacts.map(
-                                                                (impact, i) => (
-                                                                    <Card
-                                                                        key={i}
-                                                                        className="p-4 bg-white border shadow-sm hover:shadow-md transition-shadow"
-                                                                    >
-                                                                        <div className="flex gap-3">
-                                                                            <div className="p-2 bg-emerald-100">
-                                                                                <AlertCircle className="text-emerald-600 h-5 w-5" />
-                                                                            </div>
-                                                                            <p className="text-gray-700">
-                                                                                {impact}
-                                                                            </p>
-                                                                        </div>
-                                                                    </Card>
-                                                                )
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {/* Risk */}
-                                                <div className="space-y-2">
-                                                    <h3 className="text-xl font-semibold text-gray-900">
-                                                        Risk Level
-                                                    </h3>
-
-                                                    <div className="flex items-center gap-4">
-                                                        <span className="px-5 py-2 bg-emerald-100 text-emerald-700 font-semibold">
-                                                            {aiAdvice.risk}
-                                                        </span>
-
-                                                        <p className="text-gray-500 text-sm">
-                                                            Based on current air conditions
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </>
+                                            <HealthInsights
+                                                advice={aiAdvice.advice}
+                                                risk={aiAdvice.risk}
+                                                healthImpacts={aiAdvice.healthImpacts}
+                                            />
                                         ) : (
-                                            <Card className="p-8 text-center bg-white border shadow-sm">
-                                                <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-emerald-500 mx-auto mb-4" />
-                                                <p className="text-gray-600">
-                                                    Generating advice...
-                                                </p>
-                                            </Card>
+                                            <LoadingIndicator label="Generating Health Intelligence" />
                                         )}
                                     </TabsContent>
 
-                                    {/* Analysis */}
-                                    <TabsContent value="analysis" className="space-y-6 mt-4">
-
-                                        <h3 className="text-xl font-semibold text-gray-900">
-                                            Historical Patterns
-                                        </h3>
-
-                                        {aiAdvice?.similarDays?.length ? (
-                                            <div className="space-y-4">
-                                                {aiAdvice.similarDays.map((day, i) => (
-                                                    <Card
-                                                        key={i}
-                                                        className="p-5 bg-white border shadow-sm"
-                                                    >
-                                                        <div className="flex justify-between mb-2">
-                                                            <div>
-                                                                <div className="font-medium">
-                                                                    {day.date}
-                                                                </div>
-                                                                <p className="text-sm text-gray-500">
-                                                                    AQI: {day.aqi}
-                                                                </p>
-                                                            </div>
-
-                                                            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-sm">
-                                                                {day.aqi <= 50
-                                                                    ? "Good"
-                                                                    : day.aqi <= 100
-                                                                        ? "Moderate"
-                                                                        : "Unhealthy"}
-                                                            </span>
-                                                        </div>
-
-                                                        <p className="text-gray-700">
-                                                            {day.summary}
-                                                        </p>
-                                                    </Card>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <Card className="p-6 text-center bg-white border shadow-sm">
-                                                <p className="text-gray-600">
-                                                    No historical data yet
-                                                </p>
-                                            </Card>
-                                        )}
+                                    <TabsContent value="analysis" className="mt-0 outline-none">
+                                        <HistoricalAnalysis similarDays={aiAdvice?.similarDays || []} />
                                     </TabsContent>
 
-                                    {/* Data */}
-                                    <TabsContent value="data" className="space-y-6 mt-4">
-
-                                        <h3 className="text-xl font-semibold text-gray-900">
-                                            Data Sources
-                                        </h3>
-
-                                        <div className="grid md:grid-cols-2 gap-4">
-
-                                            <Card className="p-5 bg-white border shadow-sm">
-                                                <div className="flex gap-3 mb-2">
-                                                    <Sparkles className="text-emerald-600" />
-                                                    <h4 className="font-semibold">
-                                                        Real-time Updates
-                                                    </h4>
-                                                </div>
-
-                                                <ul className="text-gray-600 text-sm space-y-1">
-                                                    <li>• Updated every 15 minutes</li>
-                                                    <li>• Global AQI network</li>
-                                                    <li>• Smart caching</li>
-                                                </ul>
-                                            </Card>
-
-                                            <Card className="p-5 bg-white border shadow-sm">
-                                                <div className="flex gap-3 mb-2">
-                                                    <Wind className="text-emerald-600" />
-                                                    <h4 className="font-semibold">
-                                                        Pollutant Tracking
-                                                    </h4>
-                                                </div>
-
-                                                <ul className="text-gray-600 text-sm space-y-1">
-                                                    <li>• PM2.5 / PM10 / NO₂</li>
-                                                    <li>• AI analysis</li>
-                                                    <li>• Health modeling</li>
-                                                </ul>
-                                            </Card>
-
-                                        </div>
+                                    <TabsContent value="data" className="mt-0 outline-none">
+                                        <DataProvenance />
                                     </TabsContent>
 
-                                    {/* Info */}
-                                    <TabsContent value="info" className="space-y-6 mt-4">
-
-                                        <h3 className="text-xl font-semibold text-gray-900">
-                                            Understanding AQI
-                                        </h3>
-
-                                        <Card className="p-5 bg-white border shadow-sm">
-                                            <p className="text-gray-700 text-sm leading-relaxed">
-                                                AQI measures how polluted the air is and how it
-                                                affects your health. Lower values are safer.
-                                            </p>
-                                        </Card>
-
-                                        <Card className="p-5 bg-emerald-50 border shadow-sm">
-                                            <div className="flex gap-3">
-                                                <Droplets className="text-emerald-600" />
-                                                <p className="text-gray-700 text-sm">
-                                                    Walk, cycle, and reduce energy usage to
-                                                    improve air quality 🌱
-                                                </p>
-                                            </div>
-                                        </Card>
-
+                                    <TabsContent value="info" className="mt-0 outline-none">
+                                        <SystemInfoTab />
                                     </TabsContent>
-
                                 </div>
                             </Tabs>
                         </div>
                     </div>
                 </div>
             )}
-
-            {/* Loading */}
-            {isLoading && (
-                <Card className="p-8 mt-6 bg-white border shadow-sm">
-                    <div className="flex flex-col items-center">
-
-                        <div className="relative mb-4">
-                            <div className="animate-spin h-14 w-14 rounded-full border-4 border-gray-200 border-t-emerald-500" />
-
-                            <Brain className="absolute inset-0 m-auto text-emerald-500 animate-pulse" />
-                        </div>
-
-                        <p className="text-gray-600 font-medium">
-                            AI analyzing your environment...
-                        </p>
-
-                        <p className="text-sm text-gray-500 mt-1">
-                            Preparing personalized insights
-                        </p>
-                    </div>
-                </Card>
-            )}
         </>
     );
+}
+
+function LoadingIndicator({ label }: { label: string }) {
+    return (
+        <Card className="p-20 text-center bg-white border-2 border-gray-100 rounded-[2.5rem] shadow-sm animate-pulse">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-100 border-t-emerald-600 mx-auto mb-6" />
+            <h3 className="text-xl font-black text-gray-900 mb-2">{label}...</h3>
+            <p className="text-sm font-medium text-gray-400 uppercase tracking-widest">Establishing secure neural link</p>
+        </Card>
+    )
+}
+
+function SystemInfoTab() {
+    return (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-amber-50 rounded-xl">
+                    <Info className="h-5 w-5 text-amber-500" />
+                </div>
+                <h3 className="text-xl font-black text-gray-900">Atmospheric Ontology</h3>
+            </div>
+
+            <Card className="p-8 bg-white border-2 border-gray-100 rounded-[2.5rem] shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <LayoutGrid className="h-5 w-5 text-emerald-600" />
+                            <h4 className="font-black text-gray-900">Contextual Thresholds</h4>
+                        </div>
+                        <p className="text-sm text-gray-600 font-medium leading-relaxed">
+                            ENVI IQ doesn't just look at raw numbers. We analyze the <span className="text-emerald-600 font-bold">synergy</span> between different pollutants to provide a holistic risk assessment.
+                        </p>
+                    </div>
+
+                    <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100">
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Sustainability Protocol</span>
+                        </div>
+                        <p className="text-xs font-bold text-gray-800 italic">
+                            "The best air filter is a tree. The second best is intelligence."
+                        </p>
+                    </div>
+                </div>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                    { title: "Privacy", value: "E2E Encrypted" },
+                    { title: "Latency", value: "240ms" },
+                    { title: "Node Coverage", value: "98.4%" },
+                ].map((stat, i) => (
+                    <div key={i} className="p-6 rounded-3xl bg-white border-2 border-gray-100 flex flex-col items-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{stat.title}</p>
+                        <p className="text-xl font-black text-gray-900">{stat.value}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
 }

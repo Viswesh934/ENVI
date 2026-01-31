@@ -11,25 +11,29 @@ export default async function marketplaceRoutes(app: FastifyInstance) {
      */
     app.get("/products", async (request, reply) => {
         try {
-            const { category } = request.query as { category?: ProductCategory }
+            const { category, page = 1, limit = 5 } = request.query as { category?: ProductCategory; page?: number; limit?: number }
+            const pageNum = Number(page)
+            const limitNum = Number(limit)
 
+            let products: any[] = []
             if (category) {
-                const products = await ecoProductsService.getByCategory(category)
-                return reply.status(200).send({
-                    success: true,
-                    data: products,
-                    count: products.length,
-                })
+                products = await ecoProductsService.getByCategory(category)
+            } else {
+                const categories: ProductCategory[] = ["mask", "purifier", "plant", "monitor", "supplement"]
+                products = await ecoProductsService.getByCategories(categories)
             }
 
-            // Get all categories
-            const categories: ProductCategory[] = ["mask", "purifier", "plant", "monitor", "supplement"]
-            const products = await ecoProductsService.getByCategories(categories)
+            const total = products.length
+            const startIndex = (pageNum - 1) * limitNum
+            const paginatedProducts = products.slice(startIndex, startIndex + limitNum)
 
             return reply.status(200).send({
                 success: true,
-                data: products,
-                count: products.length,
+                data: paginatedProducts,
+                total,
+                page: pageNum,
+                limit: limitNum,
+                totalPages: Math.ceil(total / limitNum)
             })
         } catch (error) {
             console.error("Error fetching products:", error)

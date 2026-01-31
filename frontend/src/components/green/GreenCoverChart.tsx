@@ -142,8 +142,14 @@ export function GreenCoverChart({ data }: GreenCoverChartProps) {
 
             {/* Detailed Modal */}
             {showDetails && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/60 backdrop-blur-xl animate-in fade-in duration-300"
+                    onClick={() => setShowDetails(false)}
+                >
+                    <div
+                        className="relative bg-white rounded-[2.5rem] shadow-[0_32px_128px_-16px_rgba(0,0,0,0.15)] max-w-4xl w-full max-h-[90vh] overflow-hidden border-8 border-white animate-in zoom-in-95 duration-500"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         {/* Header */}
                         <div className="p-6 border-b border-gray-200">
                             <div className="flex items-center justify-between mb-4">
