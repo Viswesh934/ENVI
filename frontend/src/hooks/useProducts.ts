@@ -5,16 +5,25 @@ import type { EcoProduct, RiskLevel, ProductCategory } from "@/types/products"
 /**
  * Hook to get all products (optionally filtered by category)
  */
-export function useProducts(category?: ProductCategory) {
+export function useProducts(category?: ProductCategory, page: number = 1, limit: number = 5) {
     return useQuery({
-        queryKey: ["products", category],
+        queryKey: ["products", category, page, limit],
         queryFn: async () => {
             const url = category
-                ? `/marketplace/products?category=${category}`
-                : "/marketplace/products"
+                ? `/marketplace/products?category=${category}&page=${page}&limit=${limit}`
+                : `/marketplace/products?page=${page}&limit=${limit}`
 
-            const response = await apiRequest.get<{ success: boolean; data: EcoProduct[]; count: number }>(url)
-            return response.data // Extract the products array
+            interface PaginatedResponse {
+                success: boolean
+                data: EcoProduct[]
+                total: number
+                page: number
+                limit: number
+                totalPages: number
+            }
+
+            const response = await apiRequest.get<PaginatedResponse>(url)
+            return response.data
         },
         staleTime: 1000 * 60 * 60, // 1 hour
         gcTime: 1000 * 60 * 60 * 24, // 24 hours
@@ -40,7 +49,7 @@ export function useRecommendedProducts(risk: RiskLevel, pm25?: number, hasSympto
             })
             return {
                 products: response.data?.data || [],
-                categories: response.data?.categories || [],
+                categories: (response.data as any)?.categories || [],
             }
         },
         enabled: !!risk,

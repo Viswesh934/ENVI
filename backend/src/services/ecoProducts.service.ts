@@ -18,6 +18,8 @@ export interface EcoProduct {
     imageUrl?: string
     brand?: string
     features?: string[]
+    ecoScore?: number // 1-100
+    sustainabilityTags?: string[] // ["Plastic-Free", "Carbon-Neutral", "Solar-Powered"]
 }
 
 export class EcoProductsService {
@@ -104,7 +106,7 @@ export class EcoProductsService {
             {
                 id: "M1",
                 category: "mask",
-                name: "N95 Respirator Mask (Pack of 10)",
+                name: "N95 Respirator Shield",
                 description: "NIOSH approved N95 mask for PM2.5 and PM10 protection",
                 price: 299,
                 rating: 4.6,
@@ -113,26 +115,30 @@ export class EcoProductsService {
                 recommendedFor: ["High", "Severe"],
                 url: "https://amazon.in/n95-mask",
                 brand: "3M",
+                ecoScore: 65,
+                sustainabilityTags: ["Recyclable Packaging"],
             },
             {
                 id: "M2",
                 category: "mask",
-                name: "Reusable Anti-Pollution Mask",
-                description: "Washable mask with replaceable filters",
+                name: "Vogmask Anti-Pollution Asset",
+                description: "Washable mask with replaceable filters and high-clearance design",
                 price: 599,
-                rating: 4.3,
-                reviewCount: 890,
+                rating: 4.8,
+                reviewCount: 2100,
                 helpsWith: ["pm25", "pm10"],
                 recommendedFor: ["Medium", "High"],
                 url: "https://amazon.in/reusable-mask",
                 brand: "Vogmask",
+                ecoScore: 88,
+                sustainabilityTags: ["Reusable", "B-Corp"],
             },
 
             // Air Purifiers
             {
                 id: "P1",
                 category: "purifier",
-                name: "HEPA Air Purifier for Home",
+                name: "Philips HEPA Guardian",
                 description: "True HEPA filter removes 99.97% of particles",
                 price: 8999,
                 rating: 4.7,
@@ -141,12 +147,14 @@ export class EcoProductsService {
                 recommendedFor: ["Medium", "High", "Severe"],
                 url: "https://amazon.in/hepa-purifier",
                 brand: "Philips",
+                ecoScore: 72,
+                sustainabilityTags: ["Energy Star", "Long-life Filter"],
             },
             {
                 id: "P2",
                 category: "purifier",
-                name: "Smart Air Purifier with App Control",
-                description: "WiFi enabled purifier with real-time monitoring",
+                name: "Xiaomi Intelligence Purifier",
+                description: "WiFi enabled purifier with real-time ecosystem monitoring",
                 price: 12999,
                 rating: 4.8,
                 reviewCount: 1560,
@@ -154,14 +162,16 @@ export class EcoProductsService {
                 recommendedFor: ["High", "Severe"],
                 url: "https://amazon.in/smart-purifier",
                 brand: "Xiaomi",
+                ecoScore: 68,
+                sustainabilityTags: ["Smart Power-Saving"],
             },
 
             // Plants
             {
                 id: "PL1",
                 category: "plant",
-                name: "Snake Plant (Air Purifying)",
-                description: "NASA approved air purifying plant",
+                name: "Snake Plant Bio-Node",
+                description: "NASA approved air purifying biological asset",
                 price: 299,
                 rating: 4.5,
                 reviewCount: 780,
@@ -169,12 +179,14 @@ export class EcoProductsService {
                 recommendedFor: ["Low", "Medium"],
                 url: "https://nurserylive.com/snake-plant",
                 brand: "NurseryLive",
+                ecoScore: 98,
+                sustainabilityTags: ["100% Organic", "Zero-Carbon"],
             },
             {
                 id: "PL2",
                 category: "plant",
-                name: "Peace Lily (Air Purifier)",
-                description: "Removes toxins and improves air quality",
+                name: "Peace Lily Organic Shield",
+                description: "Removes toxins and improves localized air quality",
                 price: 349,
                 rating: 4.6,
                 reviewCount: 650,
@@ -182,14 +194,16 @@ export class EcoProductsService {
                 recommendedFor: ["Low", "Medium"],
                 url: "https://nurserylive.com/peace-lily",
                 brand: "NurseryLive",
+                ecoScore: 95,
+                sustainabilityTags: ["Locally Sourced", "Plastic-Free Pot"],
             },
 
             // Monitors
             {
                 id: "MO1",
                 category: "monitor",
-                name: "Indoor Air Quality Monitor",
-                description: "Tracks PM2.5, PM10, CO2, temperature, humidity",
+                name: "Temtop Intelligence Node",
+                description: "Tracks PM2.5, PM10, CO2, temperature, humidity with precision",
                 price: 4999,
                 rating: 4.4,
                 reviewCount: 430,
@@ -197,14 +211,16 @@ export class EcoProductsService {
                 recommendedFor: ["Low", "Medium", "High"],
                 url: "https://amazon.in/air-monitor",
                 brand: "Temtop",
+                ecoScore: 82,
+                sustainabilityTags: ["Low-Power IoT", "Sustainable Sourcing"],
             },
 
             // Supplements
             {
                 id: "S1",
                 category: "supplement",
-                name: "Lung Health Supplement",
-                description: "Antioxidants for respiratory health",
+                name: "Himalaya Biological Fortress",
+                description: "Antioxidants for respiratory fortification and immunity",
                 price: 899,
                 rating: 4.2,
                 reviewCount: 320,
@@ -212,6 +228,8 @@ export class EcoProductsService {
                 recommendedFor: ["Medium", "High", "Severe"],
                 url: "https://amazon.in/lung-supplement",
                 brand: "Himalaya",
+                ecoScore: 92,
+                sustainabilityTags: ["Ayurvedic", "Cruelty-Free"],
             },
         ]
 

@@ -5,12 +5,15 @@ import { useAQI } from "@/hooks/useAQI"
 import { useRecommendedProducts, useProducts } from "@/hooks/useProducts"
 import { ProductCard } from "@/components/ProductCard"
 import { Card } from "@/components/ui/card"
-import { Loader2, Package, Filter, Sparkles, ShoppingBag } from "lucide-react"
+import { Loader2, Package, Filter, Sparkles, ShoppingBag, Brain, ShieldAlert, Zap, Globe } from "lucide-react"
+import { cn } from "@/lib/utils"
 import type { ProductCategory, RiskLevel } from "@/types/products"
 
 function ProductsPage() {
     const [selectedCategory, setSelectedCategory] = useState<ProductCategory | undefined>()
     const [showRecommended, setShowRecommended] = useState(true)
+    const [page, setPage] = useState(1)
+    const limit = 4
 
     // Get location and AQI for recommendations
     const { coordinates } = useGeolocation()
@@ -37,150 +40,158 @@ function ProductsPage() {
         aqiData?.iaqi?.pm25?.v,
         false
     )
-    const { data: allProducts, isLoading: allLoading } = useProducts(selectedCategory)
+    const { data: paginatedData, isLoading: allLoading } = useProducts(selectedCategory, page, limit)
 
-    const isLoading = showRecommended ? recLoading : allLoading
+    const isLoading = (showRecommended && !selectedCategory) ? recLoading : allLoading
 
-    // Extract products array from different response structures
-    const products = showRecommended
+    // Extract products array
+    const products = (showRecommended && !selectedCategory)
         ? recommendedData?.products
-        : allProducts?.data
+        : paginatedData?.data
 
-    const categories: Array<{ value: ProductCategory; label: string; icon: string }> = [
-        { value: "mask", label: "Masks", icon: "😷" },
-        { value: "purifier", label: "Air Purifiers", icon: "💨" },
-        { value: "plant", label: "Plants", icon: "🌿" },
-        { value: "monitor", label: "Monitors", icon: "📊" },
-        { value: "supplement", label: "Supplements", icon: "💊" },
+    const totalPages = (showRecommended && !selectedCategory)
+        ? 1
+        : (paginatedData?.totalPages || 1)
+
+    const categories: Array<{ value: ProductCategory; label: string; icon: string; description: string }> = [
+        { value: "mask", label: "Respiratory Shields", icon: "😷", description: "Advanced filtration against airborne particles." },
+        { value: "purifier", label: "Atmosphere Purifiers", icon: "💨", description: "HEPA-grade systems for indoor environments." },
+        { value: "plant", label: "Organic Bio-Filters", icon: "🌿", description: "NASA-approved natural air purification." },
+        { value: "monitor", label: "Intelligence Nodes", icon: "📊", description: "Real-time tracking of local pollutants." },
+        { value: "supplement", label: "Biological Fortress", icon: "💊", description: "Immunity and respiratory health support." },
     ]
 
     return (
-        <div className="space-y-6 max-w-6xl mx-auto">
-            {/* Header */}
-            <header className="space-y-2">
-                <div className="flex items-center gap-3">
-                    <ShoppingBag className="w-8 h-8 text-emerald-600" />
-                    <h1 className="text-3xl font-bold">Eco Marketplace</h1>
-                </div>
-                <p className="text-gray-600">
-                    Products to help you breathe better and live healthier
-                </p>
-            </header>
+        <div className="min-h-screen bg-gray py-8">
+            <div className="w-full space-y-10 animate-in fade-in duration-700">
+                {/* Dashboard-style Header */}
+                <header className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-3xl font-bold text-gray-900">Eco Store</h1>
+                        </div>
+                        <p className="text-xl text-gray-500 font-medium max-w-2xl">
+                            Specialized assets to fortify your local ecosystem.
+                        </p>
+                    </div>
+                </header>
 
-            {/* Filters */}
-            <Card className="p-4">
-                <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-gray-600" />
-                        <span className="text-sm font-medium text-gray-700">Filter:</span>
+                {/* Intelligent Filter Engine */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div className="lg:col-span-3 space-y-8">
+                        {/* Navigation Pills */}
+                        <div className="space-y-3">
+                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 ml-4 mb-4">Product Categories</h3>
+                            <button
+                                onClick={() => {
+                                    setShowRecommended(true)
+                                    setSelectedCategory(undefined)
+                                    setPage(1)
+                                }}
+                                className={cn(
+                                    "w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-black",
+                                    showRecommended && !selectedCategory
+                                        ? "bg-emerald-600 text-white shadow-xl shadow-emerald-200"
+                                        : "bg-white text-gray-500 hover:bg-emerald-50 hover:text-emerald-700"
+                                )}
+                            >
+                                <Sparkles className="w-5 h-5" />
+                                Recommendations
+                            </button>
+                            {categories.map((cat) => (
+                                <button
+                                    key={cat.value}
+                                    onClick={() => {
+                                        setShowRecommended(false)
+                                        setSelectedCategory(cat.value)
+                                        setPage(1)
+                                    }}
+                                    className={cn(
+                                        "w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-black",
+                                        !showRecommended && selectedCategory === cat.value
+                                            ? "bg-emerald-600 text-white shadow-xl shadow-emerald-200"
+                                            : "bg-white text-gray-500 hover:bg-emerald-50 hover:text-emerald-700 border-2 border-transparent hover:border-emerald-100"
+                                    )}
+                                >
+                                    <span className="text-xl">{cat.icon}</span>
+                                    {cat.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Recommended Toggle */}
-                    <button
-                        onClick={() => {
-                            setShowRecommended(true)
-                            setSelectedCategory(undefined)
-                        }}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${showRecommended
-                            ? "bg-emerald-600 text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            }`}
-                    >
-                        <div className="flex items-center gap-2">
-                            <Sparkles className="w-4 h-4" />
-                            <span>Recommended for You</span>
-                        </div>
-                    </button>
+                    {/* Content Feed */}
+                    <div className="lg:col-span-9 space-y-8">
+                        {/* Marketplace Feed */}
+                        <div className="grid grid-cols-1 gap-6">
+                            {isLoading ? (
+                                Array.from({ length: 2 }).map((_, i) => (
+                                    <Card key={i} className="p-8 rounded-[2rem] border-2 border-gray-100 animate-pulse">
+                                        <div className="flex gap-8">
+                                            <div className="w-32 h-32 bg-gray-100 rounded-2xl" />
+                                            <div className="flex-1 space-y-4">
+                                                <div className="h-6 bg-gray-100 rounded-lg w-1/2" />
+                                                <div className="h-10 bg-gray-100 rounded-xl" />
+                                            </div>
+                                        </div>
+                                    </Card>
+                                ))
+                            ) : products && products.length > 0 ? (
+                                <>
+                                    {products.map((product: any) => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))}
 
-                    {/* All Products */}
-                    <button
-                        onClick={() => {
-                            setShowRecommended(false)
-                            setSelectedCategory(undefined)
-                        }}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${!showRecommended && !selectedCategory
-                            ? "bg-emerald-600 text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            }`}
-                    >
-                        All Products
-                    </button>
-
-                    {/* Category Filters */}
-                    {categories.map((cat) => (
-                        <button
-                            key={cat.value}
-                            onClick={() => {
-                                setShowRecommended(false)
-                                setSelectedCategory(cat.value)
-                            }}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${!showRecommended && selectedCategory === cat.value
-                                ? "bg-emerald-600 text-white"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                }`}
-                        >
-                            <div className="flex items-center gap-2">
-                                <span>{cat.icon}</span>
-                                <span>{cat.label}</span>
-                            </div>
-                        </button>
-                    ))}
-                </div>
-            </Card>
-
-            {/* Recommendation Info */}
-            {showRecommended && aqiData && (
-                <Card className="p-4 bg-emerald-50 border-emerald-200">
-                    <div className="flex items-start gap-3">
-                        <Sparkles className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                            <h3 className="font-semibold text-emerald-900">
-                                Personalized Recommendations
-                            </h3>
-                            <p className="text-sm text-emerald-700 mt-1">
-                                Based on your current AQI of <strong>{aqiData.aqi}</strong> ({risk} risk),
-                                we recommend these products to protect your health.
-                            </p>
-                            {recommendedData?.categories && (
-                                <p className="text-xs text-emerald-600 mt-2">
-                                    Recommended categories: {recommendedData.categories.join(", ")}
-                                </p>
+                                    {/* Pagination Controls */}
+                                    {totalPages > 1 && (
+                                        <div className="flex items-center justify-center gap-4 pt-6">
+                                            <button
+                                                disabled={page === 1}
+                                                onClick={() => setPage(p => p - 1)}
+                                                className="px-6 py-3 rounded-xl bg-white border-2 border-gray-100 font-black text-gray-600 hover:bg-emerald-50 hover:border-emerald-100 disabled:opacity-50 disabled:hover:bg-white transition-all shadow-sm"
+                                            >
+                                                Previous
+                                            </button>
+                                            <div className="flex items-center gap-2">
+                                                {Array.from({ length: totalPages }).map((_, i) => (
+                                                    <button
+                                                        key={i}
+                                                        onClick={() => setPage(i + 1)}
+                                                        className={cn(
+                                                            "h-10 w-10 rounded-lg font-black transition-all",
+                                                            page === i + 1
+                                                                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                                                                : "bg-white text-gray-400 hover:bg-gray-50"
+                                                        )}
+                                                    >
+                                                        {i + 1}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <button
+                                                disabled={page === totalPages}
+                                                onClick={() => setPage(p => p + 1)}
+                                                className="px-6 py-3 rounded-xl bg-white border-2 border-gray-100 font-black text-gray-600 hover:bg-emerald-50 hover:border-emerald-100 disabled:opacity-50 disabled:hover:bg-white transition-all shadow-sm"
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <Card className="p-16 text-center rounded-[3rem] border-4 border-dashed border-gray-100 flex flex-col items-center justify-center space-y-6">
+                                    <div className="p-6 bg-gray-50 rounded-full">
+                                        <Package className="w-20 h-20 text-gray-200" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-black text-gray-900">No Assets Identified</h3>
+                                    </div>
+                                </Card>
                             )}
                         </div>
                     </div>
-                </Card>
-            )}
-
-            {/* Products Grid */}
-            {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                    <div className="text-center">
-                        <Loader2 className="w-8 h-8 animate-spin text-emerald-600 mx-auto mb-3" />
-                        <p className="text-gray-600">Loading products...</p>
-                    </div>
                 </div>
-            ) : products && products.length > 0 ? (
-                <div className="grid gap-4">
-                    {products.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
-            ) : (
-                <Card className="p-12 text-center">
-                    <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No Products Found</h3>
-                    <p className="text-gray-600">
-                        Try selecting a different category or check back later.
-                    </p>
-                </Card>
-            )}
-
-            {/* Product Count */}
-            {products && products.length > 0 && (
-                <div className="text-center text-sm text-gray-500 pb-6">
-                    Showing {products.length} product{products.length !== 1 ? "s" : ""}
-                </div>
-            )}
+            </div>
         </div>
     )
 }

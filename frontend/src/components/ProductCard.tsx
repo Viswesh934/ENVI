@@ -1,5 +1,8 @@
-import { ExternalLink, Star, ShoppingCart } from "lucide-react"
+import { ExternalLink, Star, ShoppingCart, Leaf, ShieldCheck, Trophy, BadgeCheck, Zap } from "lucide-react"
 import { Card } from "./ui/card"
+import { cn } from "@/lib/utils"
+import { useGeolocation } from "@/hooks/useGeolocation"
+import { useAQI } from "@/hooks/useAQI"
 import type { EcoProduct } from "@/types/products"
 
 interface ProductCardProps {
@@ -7,6 +10,13 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+    const { coordinates } = useGeolocation()
+    const { data: aqiData } = useAQI({
+        latitude: coordinates?.latitude || 0,
+        longitude: coordinates?.longitude || 0,
+        enabled: !!coordinates,
+    })
+
     const categoryIcons: Record<string, string> = {
         mask: "😷",
         purifier: "💨",
@@ -15,72 +25,78 @@ export function ProductCard({ product }: ProductCardProps) {
         supplement: "💊",
     }
 
+    const calculateMatch = () => {
+        if (!aqiData) return 85
+        let score = 80
+        const pm25 = aqiData.iaqi?.pm25?.v || aqiData.aqi
+        if (product.helpsWith.includes("pm25") && pm25 > 100) score += 15
+        if (product.category === "plant" && pm25 < 50) score += 10
+        if (product.category === "purifier" && pm25 > 150) score += 18
+        return Math.min(score, 99)
+    }
+
+    const matchScore = calculateMatch()
+    const ecoScore = product.ecoScore || 82
+
     return (
-        <Card className="p-4 hover:shadow-lg transition-shadow">
-            <div className="flex gap-4">
-                {/* Icon */}
-                <div className="flex-shrink-0">
-                    <div className="w-16 h-16 bg-emerald-50 rounded-lg flex items-center justify-center text-3xl">
+        <Card className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-5 transition-all hover:shadow-xl hover:border-emerald-100">
+            <div className="flex gap-6">
+                {/* Visual Area - Compact */}
+                <div className="relative shrink-0">
+                    <div className="w-24 h-24 rounded-2xl bg-gray-50 flex items-center justify-center text-4xl group-hover:scale-105 transition-transform border border-transparent group-hover:border-emerald-100">
                         {categoryIcons[product.category] || "📦"}
                     </div>
                 </div>
 
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 line-clamp-2">
+                {/* Content Area - Streamlined */}
+                <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
+                    <div>
+                        <div className="flex items-center justify-between gap-4">
+                            <h3 className="text-xl font-black text-gray-900 truncate">
                                 {product.name}
                             </h3>
-                            {product.brand && (
-                                <p className="text-xs text-gray-500 mt-0.5">{product.brand}</p>
-                            )}
-                        </div>
-                        <div className="flex-shrink-0 text-right">
-                            <p className="text-lg font-bold text-emerald-600">
+                            <div className="text-xl font-black text-emerald-600 shrink-0">
                                 ₹{product.price.toLocaleString()}
-                            </p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 mt-1">
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{product.brand || "Authentic"}</span>
+                            <div className="flex items-center gap-1">
+                                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                                <span className="text-[10px] font-black text-gray-600">{product.rating}</span>
+                            </div>
+                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                <Zap className="h-2 w-2 fill-current" />
+                                <span className="text-[9px] font-black">{matchScore}% Match</span>
+                            </div>
                         </div>
                     </div>
 
-                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                        {product.description}
-                    </p>
-
-                    {/* Rating */}
-                    <div className="flex items-center gap-2 mt-2">
-                        <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">{product.rating}</span>
+                    <div className="flex items-center justify-between gap-4 pt-3">
+                        <div className="flex flex-wrap gap-1.5">
+                            {product.sustainabilityTags?.slice(0, 1).map((tag) => (
+                                <span key={tag} className="text-[9px] font-bold bg-gray-50 text-gray-500 px-2 py-0.5 rounded-md border border-gray-100">
+                                    {tag}
+                                </span>
+                            ))}
+                            {product.helpsWith.slice(0, 2).map((help) => (
+                                <span key={help} className="text-[9px] font-bold text-emerald-600">
+                                    • {help}
+                                </span>
+                            ))}
                         </div>
-                        <span className="text-xs text-gray-500">
-                            ({product.reviewCount.toLocaleString()} reviews)
-                        </span>
-                    </div>
 
-                    {/* Helps With Tags */}
-                    <div className="flex flex-wrap gap-1 mt-2">
-                        {product.helpsWith.slice(0, 3).map((help) => (
-                            <span
-                                key={help}
-                                className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full"
-                            >
-                                {help}
-                            </span>
-                        ))}
+                        <a
+                            href={product.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="h-10 px-6 inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl transition-all shadow-lg shadow-emerald-200 active:scale-95"
+                        >
+                            Acquire
+                            <ExternalLink className="h-3 w-3 opacity-50" />
+                        </a>
                     </div>
-
-                    {/* Action Button */}
-                    <a
-                        href={product.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-3 w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                    >
-                        <ShoppingCart className="w-4 h-4" />
-                        <span>View Product</span>
-                        <ExternalLink className="w-3 h-3" />
-                    </a>
                 </div>
             </div>
         </Card>

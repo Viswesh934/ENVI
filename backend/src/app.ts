@@ -7,6 +7,7 @@ import historyRoutes from "./routes/history.route"
 import advisorRoutes from "./routes/advisor.route"
 import marketplaceRoutes from "./routes/marketplace.route"
 import GreenRoute from "./routes/green.route"
+import todayRoutes from "./routes/today.route"
 import jwt from "./plugins/jwt"
 import auth from "./plugins/auth"
 import authRoutes from "./routes/auth"
@@ -43,6 +44,7 @@ app.register(async function protectedRoutes(fastify) {
   fastify.register(advisorRoutes, { prefix: "/api/advisor" })
   fastify.register(marketplaceRoutes, { prefix: "/api/marketplace" })
   fastify.register(GreenRoute, { prefix: "/api/green" })
+  fastify.register(todayRoutes, { prefix: "/api/today" })
 })
 
 // Initialize tables on startup
