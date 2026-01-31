@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
-import { apiRequest,type ApiResponse } from "./api-request"
+import { apiRequest, type ApiResponse } from "./api-request"
 
 interface LoginRequest {
   email: string
@@ -12,6 +12,7 @@ interface LoginResponse {
 interface RegisterRequest {
   email: string
   password: string
+  location?: string
 }
 interface RegisterResponse {
   success: boolean

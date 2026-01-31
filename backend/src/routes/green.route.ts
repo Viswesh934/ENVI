@@ -3,24 +3,26 @@ import { generateGreenCoverReport } from "../services/gemini.service"
 
 const GreenRoute: FastifyPluginAsync = async (fastify) => {
     /**
-     * GET /api/green/cover
-     * Analyze green cover for a location
+     * GET /api/green
+     * Analyze green cover for the user's location
+     * Uses location from JWT token (set during registration)
      */
     fastify.get<{
-        Querystring: { location: string; lat?: string; lng?: string }
+        Querystring: { location?: string }
     }>("/", async (request, reply) => {
         try {
-            const { location, lat, lng } = request.query
+            // Get location from JWT token (user's registered location)
+            const userLocation = (request.user as { location?: string })?.location
+            // Allow override via query param, fallback to user's stored location
+            const location = request.query.location || userLocation
 
             if (!location) {
-                return reply.code(400).send({ error: "Location is required" })
+                return reply.code(400).send({
+                    error: "Location is required. Please update your profile with a location or provide one in the query."
+                })
             }
 
-            const report = await generateGreenCoverReport(
-                location,
-                lat ? parseFloat(lat) : undefined,
-                lng ? parseFloat(lng) : undefined
-            )
+            const report = await generateGreenCoverReport(location)
 
             return report
         } catch (error) {
@@ -31,3 +33,4 @@ const GreenRoute: FastifyPluginAsync = async (fastify) => {
 }
 
 export default GreenRoute
+

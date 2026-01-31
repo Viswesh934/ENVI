@@ -33,6 +33,7 @@ export default async function (fastify: FastifyInstance) {
       const token = fastify.jwt.sign({
         userId: user.userId,
         email: user.email,
+        location: user.location || null,
       })
 
       return { token }

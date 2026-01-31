@@ -2,21 +2,17 @@ import { useQuery } from "@tanstack/react-query"
 import apiRequest, { ApiRequest } from "./api-request"
 import type { GreenCoverReport } from "@/types/green"
 
-export const useGreenCover = (location?: string, lat?: number, lng?: number) => {
+export const useGreenCover = (location: string | null) => {
     return useQuery({
-        queryKey: ["green-cover", location, lat, lng],
+        queryKey: ["green-cover", location],
         queryFn: async () => {
-            if (!location) return null
-
-            const params = new URLSearchParams()
-            params.append("location", location)
-            if (lat) params.append("lat", lat.toString())
-            if (lng) params.append("lng", lng.toString())
-
-            const { data } = await apiRequest.get<GreenCoverReport>("/green", { params })
+            // If no location provided, call without params (backend will use user's registered location)
+            const params = location ? { params: { location } } : undefined
+            const { data } = await apiRequest.get<GreenCoverReport>("/green", params)
             return data
         },
-        enabled: !!location, // Only fetch if location is provided
+        enabled: true, // Always enabled - backend uses user's location from JWT if not provided
         staleTime: 1000 * 60 * 60 * 24, // Cache for 24 hours (data doesn't change fast)
     })
 }
+

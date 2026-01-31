@@ -6,6 +6,7 @@ export const registerSchema = {
     properties: {
       email: { type: "string", format: "email" },
       password: { type: "string", minLength: 8 },
+      location: { type: "string" },
     },
   },
 }

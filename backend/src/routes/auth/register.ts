@@ -10,7 +10,7 @@ export default async function (fastify: FastifyInstance) {
     "/auth/register",
     { schema: registerSchema },
     async (request, reply) => {
-      const { email, password } = request.body as { email: string; password: string }
+      const { email, password, location } = request.body as { email: string; password: string; location?: string }
 
       // Check if user exists
       const existing = await dynamo.send(
@@ -35,6 +35,7 @@ export default async function (fastify: FastifyInstance) {
             userId: uuid(),
             email,
             passwordHash,
+            location: location || null,
             createdAt: new Date().toISOString(),
           },
         })
