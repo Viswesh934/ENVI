@@ -2,12 +2,14 @@ import { Card } from "@/components/ui/card"
 import { useState, useEffect } from "react"
 import { useAuth } from "@/hooks/authHook"
 import { useNavigate } from "@tanstack/react-router"
-import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from "lucide-react"
+import { toast } from "sonner"
+import { Eye, EyeOff, Mail, Lock, User, AlertCircle, MapPin } from "lucide-react"
 
 export default function RegisterRoute() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [location, setLocation] = useState("")
   const [showPassword, setShowPassword] = useState(false)
 
   const { register } = useAuth()
@@ -18,7 +20,7 @@ export default function RegisterRoute() {
     if (password !== confirmPassword) {
       return
     }
-    register.mutate({ email, password })
+    register.mutate({ email, password, location: location || undefined })
   }
 
   function handleGoToLogin() {
@@ -27,9 +29,13 @@ export default function RegisterRoute() {
 
   useEffect(() => {
     if (register.data?.success) {
+      toast.success("Account created successfully")
       navigate({ to: "/auth/login" })
     }
-  }, [register.data, navigate])
+    if (register.error) {
+      toast.error("Failed to create account. Please try again.")
+    }
+  }, [register.data, navigate, register.error])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-emerald-50 p-4">
@@ -56,6 +62,7 @@ export default function RegisterRoute() {
               />
             </div>
           </div>
+
 
           <div>
             <div className="relative">
@@ -100,6 +107,21 @@ export default function RegisterRoute() {
               <p className="mt-1 text-xs text-red-600">Passwords don't match</p>
             )}
           </div>
+
+          <div>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none text-sm"
+                type="text"
+                placeholder="Location (e.g., Mumbai, India)"
+                value={location}
+                onChange={e => setLocation(e.target.value)}
+                disabled={register.isPending}
+              />
+            </div>
+          </div>
+
 
           <button
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 text-sm"

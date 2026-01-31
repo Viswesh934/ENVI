@@ -3,6 +3,7 @@ import axios, {
   type AxiosRequestConfig,
   AxiosError,
 } from "axios";
+import Cookies from "js-cookie";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL;
@@ -31,7 +32,19 @@ export class ApiRequest {
       withCredentials: true,
     });
 
-    // Optional: generic response interceptor (no auth handling)
+    // Request interceptor: Attach Bearer token from cookies
+    this.axiosInstance.interceptors.request.use(
+      (config) => {
+        const token = Cookies.get("token");
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    // Response interceptor
     this.axiosInstance.interceptors.response.use(
       response => response,
       error => Promise.reject(error)

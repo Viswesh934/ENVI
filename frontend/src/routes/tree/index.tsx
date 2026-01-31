@@ -19,16 +19,11 @@ function GreenCoverPage() {
 
   // We default to "Current Location" label if we have coords, 
   // effectively relying on lat/lng for the API logic.
-  const locationQuery = submittedLocation || (coordinates ? "Current Location" : "Hyderabad")
+  const locationQuery = submittedLocation
 
-  // If search is submitted, pass undefined for lat/lng to force string-based lookup
-  const lat = submittedLocation ? undefined : coordinates?.latitude
-  const lng = submittedLocation ? undefined : coordinates?.longitude
 
   const { data, isLoading: dataLoading, error: dataError } = useGreenCover(
-    locationQuery,
-    lat,
-    lng
+    locationQuery
   )
 
   const handleSearch = (e: React.FormEvent) => {
@@ -210,9 +205,9 @@ function GreenCoverPage() {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="mt-0">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* Left Column - Chart */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <Card className="border-gray-200 h-full">
                 <div className="p-5 border-b border-gray-100">
                   <h3 className="font-semibold text-gray-900">Coverage Progress</h3>
@@ -225,8 +220,8 @@ function GreenCoverPage() {
             </div>
 
             {/* Right Column - Stats */}
-            <div className="lg:col-span-1">
-              <Card className="border-gray-200 h-full">
+            <div className="lg:col-span-2">
+              <Card className="border-gray-200 h-full w-full">
                 <div className="p-5 border-b border-gray-100">
                   <h3 className="font-semibold text-gray-900">Key Metrics</h3>
                   <p className="text-sm text-gray-500">At-a-glance statistics</p>

@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card"
 import { useState, useEffect } from "react"
 import { useAuth } from "@/hooks/authHook"
 import { useNavigate } from "@tanstack/react-router"
+import { toast } from "sonner"
 import Cookies from "js-cookie"
 import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react"
 
@@ -20,10 +21,14 @@ export default function LoginRoute() {
 
   useEffect(() => {
     if (login.data?.success && login.data.data?.token) {
+      toast.success("Login successful")
       Cookies.set("token", login.data.data.token, { path: "/" })
       navigate({ to: "/" })
     }
-  }, [login.data, navigate])
+    if (login.error) {
+      toast.error("Failed to login. Please try again.")
+    }
+  }, [login.data, navigate, login.error])
 
   function handleGoToRegister() {
     navigate({ to: "/auth/register" })
