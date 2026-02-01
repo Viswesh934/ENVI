@@ -65,4 +65,44 @@ export default async function advisorRoutes(app: FastifyInstance) {
             })
         }
     })
+
+    /**
+     * Get activity recommendation
+     * POST /api/advisor/activity-recommendation
+     */
+    app.post("/activity-recommendation", async (request, reply) => {
+        try {
+            const { userId, activity, timeWindow, location } = request.body as {
+                userId: string
+                activity: string
+                timeWindow?: string
+                location?: { city: string; lat: number; lon: number }
+            }
+
+            if (!userId || !activity) {
+                return reply.status(400).send({
+                    success: false,
+                    error: "userId and activity are required",
+                })
+            }
+
+            const result = await aiAdvisorService.getActivityRecommendation({
+                userId,
+                activity,
+                timeWindow,
+                location,
+            })
+
+            return reply.status(200).send({
+                success: true,
+                ...result,
+            })
+        } catch (error) {
+            console.error("Error generating activity recommendation:", error)
+            return reply.status(500).send({
+                success: false,
+                error: "Failed to generate activity recommendation",
+            })
+        }
+    })
 }
