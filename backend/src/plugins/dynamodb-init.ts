@@ -4,13 +4,20 @@ import { DynamoDBClient, ListTablesCommand, CreateTableCommand } from "@aws-sdk/
 const TABLE_NAME = "users"
 
 export default fp(async (fastify) => {
+  const region = process.env.AWS_REGION ?? "us-east-1"
+  const endpoint = process.env.DYNAMODB_ENDPOINT
+
   const client = new DynamoDBClient({
-    region: "us-east-1",
-    endpoint: "http://localhost:8000",
-    credentials: {
-      accessKeyId: "fake",
-      secretAccessKey: "fake",
-    },
+    region,
+    ...(endpoint ? { endpoint } : {}),
+    ...(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
+      ? {
+          credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          },
+        }
+      : {}),
   })
 
   const tables = await client.send(new ListTablesCommand({}))
@@ -28,7 +35,6 @@ export default fp(async (fastify) => {
             IndexName: "email-index",
             KeySchema: [{ AttributeName: "email", KeyType: "HASH" }],
             Projection: { ProjectionType: "ALL" },
-            ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1 },
           },
         ],
         BillingMode: "PAY_PER_REQUEST",
