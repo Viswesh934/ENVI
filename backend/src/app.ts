@@ -29,6 +29,11 @@ app.register(dynamodbInit)
 app.register(jwt)
 app.register(auth)
 
+// Health check endpoint
+app.get("/health", async () => {
+  return { status: "ok", timestamp: new Date().toISOString() }
+})
+
 // Public routes (no authentication required)
 app.register(authRoutes, { prefix: "/api" })
 app.register(aqiRoutes, { prefix: "/api" })
@@ -61,7 +66,7 @@ app.ready().then(async () => {
   }
 })
 
-app.listen({ port: 3000 }, (err, address) => {
+app.listen({ port: 3000, host: "0.0.0.0" }, (err, address) => {
   if (err) {
     app.log.error(err)
     process.exit(1)
