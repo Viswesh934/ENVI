@@ -52,19 +52,6 @@ app.register(async function protectedRoutes(fastify) {
   fastify.register(todayRoutes, { prefix: "/api/today" })
 })
 
-// Initialize tables on startup
-app.ready().then(async () => {
-  try {
-    await initializeTables()
-    app.log.info("✅ Database tables initialized")
-
-    // Seed initial data
-    const { seedDatabase } = await import("./config/seed")
-    await seedDatabase()
-  } catch (error) {
-    app.log.error({ error }, "❌ Failed to initialize tables")
-  }
-})
 
 app.listen({ port: 3000, host: "0.0.0.0" }, (err, address) => {
   if (err) {

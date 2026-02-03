@@ -94,7 +94,7 @@ export function TodayCard({ location }: TodayCardProps) {
     // Loading state
     if (isLoading) {
         return (
-            <Card className="rounded-3xl border-2 border-gray-100 bg-white p-8 shadow-xl">
+            <Card className="rounded-3xl border-2 bg-gray">
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <Skeleton className="h-10 w-48" />
