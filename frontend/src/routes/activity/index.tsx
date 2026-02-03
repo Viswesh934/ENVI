@@ -4,9 +4,6 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
-
-import { ActivityCard } from "@/components/ActivityCard"
-import { InsightStrip } from "@/components/InsightStrip"
 import { SafetyGauge } from "@/components/SafetyGauge"
 import { TimeWindowSelector } from "@/components/TimeWindowSelector"
 import { EnvironmentalBreakdown } from "@/components/EnvironmentalBreakdown"
@@ -27,7 +24,7 @@ const activityLabels: Record<ActivityType, string> = {
 function ActivityPage() {
   const [selected, setSelected] = useState<ActivityType>("walking")
   const [selectedTime, setSelectedTime] = useState<string>("morning")
-  
+
   // Get user's real location
   const { coordinates, loading: locationLoading, error: locationError } = useGeolocation()
 
@@ -77,7 +74,7 @@ function ActivityPage() {
                   {locationError ? "Location Access Required" : "Unable to Load Data"}
                 </h3>
                 <p className="text-base text-rose-800 leading-relaxed">
-                  {locationError 
+                  {locationError
                     ? "Please enable location access to get personalized activity recommendations for your area."
                     : "We couldn't fetch activity recommendations. Please try again later."}
                 </p>
@@ -147,11 +144,10 @@ function ActivityPage() {
                 variant={activity === selected ? "default" : "outline"}
                 size="lg"
                 onClick={() => setSelected(activity)}
-                className={`rounded-2xl px-6 py-6 text-base font-bold transition-all ${
-                  activity === selected
+                className={`rounded-2xl px-6 py-6 text-base font-bold transition-all ${activity === selected
                     ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200 scale-105"
                     : "hover:bg-gray-50 hover:border-emerald-200"
-                }`}
+                  }`}
               >
                 {activityLabels[activity]}
               </Button>
@@ -162,13 +158,12 @@ function ActivityPage() {
         {/* Main Activity Analysis Card */}
         <Card className="rounded-3xl border-2 border-gray-100 bg-gradient-to-br from-white to-gray-50 p-10 shadow-xl relative overflow-hidden">
           {/* Decorative background gradient */}
-          <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none ${
-            data.advice.level === "safe" 
-              ? "bg-emerald-200/30" 
-              : data.advice.level === "caution" 
-              ? "bg-amber-200/30" 
-              : "bg-rose-200/30"
-          }`} />
+          <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none ${data.advice.level === "safe"
+              ? "bg-emerald-200/30"
+              : data.advice.level === "caution"
+                ? "bg-amber-200/30"
+                : "bg-rose-200/30"
+            }`} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 relative z-10">
             {/* Left: Safety Gauge */}
@@ -193,13 +188,12 @@ function ActivityPage() {
               {/* Advice Message */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider ${
-                    data.advice.level === "safe"
+                  <div className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider ${data.advice.level === "safe"
                       ? "bg-emerald-100 text-emerald-700"
                       : data.advice.level === "caution"
-                      ? "bg-amber-100 text-amber-700"
-                      : "bg-rose-100 text-rose-700"
-                  }`}>
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-rose-100 text-rose-700"
+                    }`}>
                     {data.advice.level}
                   </div>
                   <Sparkles className="h-5 w-5 text-emerald-500 animate-pulse" />
@@ -252,9 +246,9 @@ function ActivityPage() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-600 mb-6 leading-relaxed">{alt.reason}</p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="w-full rounded-xl font-bold"
                     onClick={() => setSelected(alt.name.toLowerCase().replace(' ', '-') as ActivityType)}
                   >
@@ -266,28 +260,28 @@ function ActivityPage() {
           </Card>
         )}
 
-      {/* Historical Context */}
-      <Card className="rounded-3xl border-2 border-gray-100 bg-white p-10 shadow-xl">
-        <h2 className="text-2xl font-black text-gray-900 mb-6">This Month's Environmental Trends</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="rounded-2xl bg-gradient-to-br from-emerald-50 to-white p-6 border-2 border-emerald-200">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-600 mb-2">Best Day</p>
-            <p className="text-3xl font-black text-emerald-700">{data.historicalContext.bestDayThisMonth}</p>
+        {/* Historical Context */}
+        <Card className="rounded-3xl border-2 border-gray-100 bg-white p-10 shadow-xl">
+          <h2 className="text-2xl font-black text-gray-900 mb-6">This Month's Environmental Trends</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="rounded-2xl bg-gradient-to-br from-emerald-50 to-white p-6 border-2 border-emerald-200">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-600 mb-2">Best Day</p>
+              <p className="text-3xl font-black text-emerald-700">{data.historicalContext.bestDayThisMonth}</p>
+            </div>
+            <div className="rounded-2xl bg-gradient-to-br from-rose-50 to-white p-6 border-2 border-rose-200">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-rose-600 mb-2">Worst Day</p>
+              <p className="text-3xl font-black text-rose-700">{data.historicalContext.worstDayThisMonth}</p>
+            </div>
+            <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-white p-6 border-2 border-blue-200">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-600 mb-2">Average AQI</p>
+              <p className="text-3xl font-black text-blue-700">{data.historicalContext.averageAQI}</p>
+            </div>
+            <div className="rounded-2xl bg-gradient-to-br from-purple-50 to-white p-6 border-2 border-purple-200">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-purple-600 mb-2">Similar Days</p>
+              <p className="text-3xl font-black text-purple-700">{data.historicalContext.similarDaysCount} days</p>
+            </div>
           </div>
-          <div className="rounded-2xl bg-gradient-to-br from-rose-50 to-white p-6 border-2 border-rose-200">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-rose-600 mb-2">Worst Day</p>
-            <p className="text-3xl font-black text-rose-700">{data.historicalContext.worstDayThisMonth}</p>
-          </div>
-          <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-white p-6 border-2 border-blue-200">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-600 mb-2">Average AQI</p>
-            <p className="text-3xl font-black text-blue-700">{data.historicalContext.averageAQI}</p>
-          </div>
-          <div className="rounded-2xl bg-gradient-to-br from-purple-50 to-white p-6 border-2 border-purple-200">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-purple-600 mb-2">Similar Days</p>
-            <p className="text-3xl font-black text-purple-700">{data.historicalContext.similarDaysCount} days</p>
-          </div>
-        </div>
-      </Card>
+        </Card>
 
         {/* CTA Buttons */}
         <div className="flex gap-6 flex-wrap justify-center pt-4">

@@ -7,7 +7,7 @@ import { Sparkles, Activity, Brain, Info, TreePine } from "lucide-react"
 
 function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 md:px-6 py-8 relative overflow-hidden">
+    <div className="min-h-screen  px-4 md:px-6 py-8 relative overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-100/20 rounded-full blur-[120px] -mr-64 -mt-64 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-teal-100/20 rounded-full blur-[120px] -ml-64 -mb-64 pointer-events-none" />
@@ -18,20 +18,6 @@ function Home() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">How's the Environment Today?</h1>
             <p className="text-lg text-gray-500 font-medium">Monitoring your local ecosystem in real-time with predictive AI.</p>
-          </div>
-
-          <div className="flex items-center gap-3 bg-white/50 backdrop-blur-xl border-2 border-white p-2 rounded-[2rem] shadow-xl shadow-emerald-100/50">
-            <div className="flex -space-x-3">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="h-10 w-10 rounded-full border-2 border-white bg-emerald-100 flex items-center justify-center text-xs font-black text-emerald-600">
-                  {String.fromCharCode(64 + i)}
-                </div>
-              ))}
-            </div>
-            <div className="pr-4 pl-2">
-              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Active Agents</p>
-              <p className="text-sm font-black text-gray-900">3 Online</p>
-            </div>
           </div>
         </div>
 
